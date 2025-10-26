@@ -1,0 +1,21 @@
+genre_id,genre_name,subgenre_id,subgenre_name
+1,Rock,1,Hard Rock
+1,Rock,2,Alternative Rock
+2,Pop,3,Euro Pop
+2,Pop,4,Dance Pop
+3,Country,5,Singer Songwriter
+3,Country,6,Bluegrass
+4,Hip Hop,7,Gangsta Rap
+4,Hip Hop,8,Hardcore Hip Hop
+5,Electronic,9,Glitch
+5,Electronic,10,Ambient
+6,Jazz,11,Acid Jazz
+6,Jazz,12,Jazz Fusion
+7,Metal,13,Experimental Metal
+7,Metal,14,Power Metal
+8,Folk,15,Garage Punk
+8,Folk,16,Anarcho Punk
+9,R&B,17,Contemporary R&B
+9,R&B,18,Soul
+10,Reggae,19,Ska
+10,Reggae,20,Dub
