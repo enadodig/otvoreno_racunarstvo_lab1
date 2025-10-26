@@ -7,8 +7,11 @@ Ovaj skup podataka sadrži hijerarhijsku klasifikaciju glazbenih žanrova i pod�
 ## Metapodatci
 ### Licencija:
 Link: https://www.dbpedia.org/about/ | https://en.wikipedia.org/wiki/Wikipedia:Text_of_the_Creative_Commons_Attribution-ShareAlike_4.0_International_License
+
 Naziv: Creative Commons Attribution-ShareAlike 3.0 License 
+
 Vrsta: CC BY-SA 4.0 GFDL
+
 Opis: https://creativecommons.org/licenses/by-sa/4.0/deed.hr
     Slobodno možete:
     Dijelite dalje — možete umnažati i redistribuirati materijal u bilo kojem mediju ili formatu u bilo koju svrhu, pa i komercijalnu.
