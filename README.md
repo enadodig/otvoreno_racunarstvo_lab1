@@ -19,8 +19,7 @@ Opis: https://creativecommons.org/licenses/by-sa/4.0/deed.hr
     Dijeli pod istim uvjetima — Ako remiksirate, mijenjate ili prerađujete materijal, Vaše prerade morate distribuirati pod istom licencom pod kojom je bio izvornik.
     Bez daljnjih ograničenja — Ne smijete dodavati pravne uvjete ili tehnološke mjere zaštite koji će druge pravno ograničiti da čine ono što im licenca dopušta.
     Upozorenja:
-    Ne morate se pridržavati licence kada je riječ o elementima djela koji su javno dobro ili gdje je Vaše iskorištavanje djela dopušteno zakonskim iznimkama i ograničenjima autorskog prava .
-
+    Ne morate se pridržavati licence kada je riječ o elementima djela koji su javno dobro ili gdje je Vaše iskorištavanje djela dopušteno zakonskim iznimkama i ograničenjima autorskog prava.
     Nema jamstava. Licenca Vam možda ne daje sva potrebna dopuštena za Vašu željeno korištenje djela. Primjerice, druga prava poput prava nad objavljivanjem osobne fotografije, pravo privatnosti ili moralno pravo može ograničiti kako smijete koristiti materija.
 ### Naziv autora
 Ena Dodig
