@@ -1,21 +1,21 @@
-genre_id,genre_name,subgenre_id,subgenre_name
-1,Rock,1,Hard Rock
-1,Rock,2,Alternative Rock
-2,Pop,3,Euro Pop
-2,Pop,4,Dance Pop
-3,Country,5,Singer Songwriter
-3,Country,6,Bluegrass
-4,Hip Hop,7,Gangsta Rap
-4,Hip Hop,8,Hardcore Hip Hop
-5,Electronic,9,Glitch
-5,Electronic,10,Ambient
-6,Jazz,11,Acid Jazz
-6,Jazz,12,Jazz Fusion
-7,Metal,13,Experimental Metal
-7,Metal,14,Power Metal
-8,Folk,15,Garage Punk
-8,Folk,16,Anarcho Punk
-9,R&B,17,Contemporary R&B
-9,R&B,18,Soul
-10,Reggae,19,Ska
-10,Reggae,20,Dub
+genre_id,genre_name,era_of_origin,years_active,artist,top_ranked_album,origin_country,main_instruments,typical_bpm_range,vocal_style,subgenre_id,subgenre_name
+1,Rock,1950s,1950-Present,The Beatles,Abbey Road,USA/UK,"Electric Guitar, Drums",90-140 BPM,"Powerful, Raspy",1,Hard Rock
+1,Rock,1950s,1950-Present,The Beatles,Abbey Road,USA/UK,"Electric Guitar, Drums",90-140 BPM,"Powerful, Raspy",2,Alternative Rock
+2,Pop,1960s,1960-Present,Michael Jackson,Thriller,USA/UK,"Synth, Vocals",100-130 BPM,"Smooth, Catchy",3,Euro Pop
+2,Pop,1960s,1960-Present,Michael Jackson,Thriller,USA/UK,"Synth, Vocals",100-130 BPM,"Smooth, Catchy",4,Dance Pop
+3,Country,1920s,1920-Present,Johnny Cash,At Folsom Prison,USA,"Acoustic Guitar, Banjo",70-120 BPM,Southern Drawl,5,Singer Songwriter
+3,Country,1920s,1920-Present,Johnny Cash,At Folsom Prison,USA,"Acoustic Guitar, Banjo",70-120 BPM,Southern Drawl,6,Bluegrass
+4,Hip Hop,1970s,1970-Present,Tupac Shakur,All Eyez on Me,USA,"Beats, Turntables",80-110 BPM,"Rhythmic, Spoken Word",7,Gangsta Rap
+4,Hip Hop,1970s,1970-Present,Tupac Shakur,All Eyez on Me,USA,"Beats, Turntables",80-110 BPM,"Rhythmic, Spoken Word",8,Hardcore Hip Hop
+5,Electronic,1970s,1970-Present,Daft Punk,Discovery,France/Germany,"Synthesizer, Drum Machine",110-140 BPM,"Processed, Minimal",9,Glitch
+5,Electronic,1970s,1970-Present,Daft Punk,Discovery,France/Germany,"Synthesizer, Drum Machine",110-140 BPM,"Processed, Minimal",10,Ambient
+6,Jazz,1910s,1910-Present,Miles Davis,Kind of Blue,USA,"Saxophone, Piano",60-160 BPM,"Improvised, Smooth",11,Acid Jazz
+6,Jazz,1910s,1910-Present,Miles Davis,Kind of Blue,USA,"Saxophone, Piano",60-160 BPM,"Improvised, Smooth",12,Jazz Fusion
+7,Metal,1960s,1960-Present,Black Sabbath,Paranoid,UK,"Electric Guitar, Double Bass",100-180 BPM,"Aggressive, Screamed",13,Experimental Metal
+7,Metal,1960s,1960-Present,Black Sabbath,Paranoid,UK,"Electric Guitar, Double Bass",100-180 BPM,"Aggressive, Screamed",14,Power Metal
+8,Folk,1800s,1800-Present,Bob Dylan,The Freewheelin,Various,"Acoustic Guitar, Violin",70-110 BPM,"Storytelling, Natural",15,Garage Punk
+8,Folk,1800s,1800-Present,Bob Dylan,The Freewheelin,Various,"Acoustic Guitar, Violin",70-110 BPM,"Storytelling, Natural",16,Anarcho Punk
+9,R&B,1940s,1940-Present,Aretha Franklin,I Never Loved a Man,USA,"Bass, Piano",70-120 BPM,"Soulful, Emotional",17,Contemporary R&B
+9,R&B,1940s,1940-Present,Aretha Franklin,I Never Loved a Man,USA,"Bass, Piano",70-120 BPM,"Soulful, Emotional",18,Soul
+10,Reggae,1960s,1960-Present,Bob Marley,Exodus,Jamaica,"Bass, Drums",70-100 BPM,"Relaxed, Rhythmic",19,Ska
+10,Reggae,1960s,1960-Present,Bob Marley,Exodus,Jamaica,"Bass, Drums",70-100 BPM,"Relaxed, Rhythmic",20,Dub
