@@ -1,4 +1,4 @@
-# otvoreno_racunarstvo_lab1
+# otvoreno_racunarstvo
 
 ## Skup podataka glazbenih žanrova i podžanrova
 
