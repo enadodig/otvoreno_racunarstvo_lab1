@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tablica Glazbenih Žanrova</title>
+</head>
+<body>
+    <h1>Glazbeni žanrovi</h1>
+
+    <label for="search">Pretraži:</label>
+    <input type="text" id="search" placeholder="Unesi pojam">
+    <select id="attribute">
+        <option value="all">Svi atributi</option>
+        <option value="name">Ime žanra</option>
+        <option value="artist">Izvođač</option>
+        <option value="era_of_origin">Era</option>
+        <option value="years_active">Godine aktivnosti</option>
+        <option value="top_ranked_album">Top album</option>
+        <option value="origin_country">Država</option>
+        <option value="main_instruments">Glavni instrumenti</option>
+        <option value="typical_bpm_range">Tipični BPM raspon</option>
+        <option value="vocal_style">Vokalni stil</option>
+    </select>
+    <button onclick="filterData()">Filtriraj</button>
+    <button onclick="resetTable()">Resetiraj</button>
+    <button onclick="location.href='index.html'">Natrag</button>
+
+    <table id="musicTable" border="1">
+        <thead>
+            <tr>
+                <th>Ime žanra</th>
+                <th>Izvođač</th>
+                <th>Era</th>
+                <th>Godine aktivnosti</th>
+                <th>Top album</th>
+                <th>Država</th>
+                <th>Glavni instrumenti</th>
+                <th>Tipični BPM raspon</th>
+                <th>Vokalni stil</th> 
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <button onclick="downloadCSV()">Preuzmi CSV</button>
+    <button onclick="downloadJSON()">Preuzmi JSON</button>
+
+<script>
+let data = [];
+let filteredData = []; 
+
+async function loadData() {
+    const response = await fetch('data/music_genres.json');
+    data = await response.json();
+    filteredData = [...data]; 
+    displayTable(filteredData);
+}
+
+function displayTable(arr) {
+    const tbody = document.querySelector('#musicTable tbody');
+    tbody.innerHTML = '';
+    arr.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.artist}</td>
+            <td>${item.era_of_origin || ''}</td>
+            <td>${item.years_active || ''}</td>
+            <td>${item.top_ranked_album || ''}</td>
+            <td>${item.origin_country || ''}</td>
+            <td>${item.main_instruments || ''}</td>
+            <td>${item.typical_bpm_range || ''}</td>
+            <td>${item.vocal_style || ''}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function filterData() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const attr = document.getElementById('attribute').value;
+
+    if (search.trim() === '') {
+        filteredData = [...data];
+        displayTable(filteredData);
+        return;
+    }
+
+    filteredData = data.filter(item => {
+        if (attr === 'all') {
+            return Object.values(item).some(v => v && v.toLowerCase().includes(search));
+        } else {
+            return item[attr] && item[attr].toLowerCase().includes(search);
+        }
+    });
+
+    displayTable(filteredData);
+}
+
+function resetTable() {
+    document.getElementById('search').value = '';
+    document.getElementById('attribute').value = 'all';
+    filteredData = [...data];
+    displayTable(filteredData);
+}
+
+function downloadCSV() {
+    let csv = 'name,artist,era_of_origin,years_active,top_ranked_album,origin_country,main_instruments,typical_bpm_range,vocal_style\n';
+    filteredData.forEach(item => {
+        csv += `"${item.name}","${item.artist}","${item.era_of_origin || ''}","${item.years_active || ''}","${item.top_ranked_album || ''}","${item.origin_country || ''}","${item.main_instruments || ''}","${item.typical_bpm_range || ''}","${item.vocal_style || ''}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'filtered_data.csv';
+    a.click();
+}
+
+function downloadJSON() {
+    const blob = new Blob([JSON.stringify(filteredData, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'filtered_data.json';
+    a.click();
+}
+
+loadData();
+</script>
+</body>
+</html>
