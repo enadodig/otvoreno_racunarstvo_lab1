@@ -1,5 +1,6 @@
 # otvoreno_racunarstvo
 
+# Lab1
 ## Skup podataka glazbenih žanrova i podžanrova
 
 Ovaj skup podataka sadrži hijerarhijsku klasifikaciju glazbenih žanrova i podžanrova. Podatci su strukturirani u roditelj-dijete odnos koji omogućava pripadnost više podžanrova jednom glavnom žanru. Skup podataka može poslužiti za analizu glazbenih preferencija ili edukativne svrhe.
@@ -42,4 +43,7 @@ glazbeni žanrovi
 20
 ### Format podataka
 CSV, JSON
+
+# Lab2
+Web aplikacija koja prokazuje podatke u tabličnom obliku i omogućava navigaciju i filtriranje podataka te njihov izvoz u CSV i JSON fomratu.
 
