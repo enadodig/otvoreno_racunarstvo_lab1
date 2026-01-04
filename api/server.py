@@ -3,6 +3,7 @@ import json
 import urllib.parse
 import traceback
 from database import Database
+import os
 
 class APIHandler(BaseHTTPRequestHandler):
     db = Database()
@@ -52,6 +53,21 @@ class APIHandler(BaseHTTPRequestHandler):
         try:
             parsed_path = urllib.parse.urlparse(self.path)  # razdvajanje putanje i parametara
             path_parts = parsed_path.path.strip('/').split('/') # dijeljenje putanje na dijelove prema /
+            
+            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root folder projekta
+
+            if self.path == '/':
+                index_file = os.path.join(BASE_DIR, 'index.html')
+                if os.path.exists(index_file):
+                    with open(index_file, 'r', encoding='utf-8') as f:
+                        html_content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(html_content.encode('utf-8'))
+            else:
+                self._send_response(404, None, "index.html not found", "Not Found")
+            return  
             
             # openapi endpoint
             if self.path == '/openapi.json':
