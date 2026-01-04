@@ -47,3 +47,23 @@ CSV, JSON
 # Lab2
 Web aplikacija koja prokazuje podatke u tabličnom obliku i omogućava navigaciju i filtriranje podataka te njihov izvoz u CSV i JSON fomratu.
 
+# Lab3
+REST API za upravljanje glazbenim žanrovima izrađen u Pythonu s OpenAPI specifikacijom API-ja.
+
+Implementirani endpointi:
+
+GET /api/genres - dohvati sve žanrove
+
+GET /api/genres/{id} - dohvati žanr po ID-u
+
+GET /api/genres/era/{era} - dohvati žanrove po eri
+
+GET /api/genres/country/{country} - dohvati žanrove po državi
+
+GET /api/genres/artist/{artist} - dohvati žanrove po izvođaču
+
+POST /api/genres - kreiraj novi žanr
+
+PUT /api/genres/{id} - ažuriraj žanr
+
+DELETE /api/genres/{id} - obriši žanr
