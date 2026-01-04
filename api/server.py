@@ -65,9 +65,15 @@ class APIHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-Type', 'text/html')
                     self.end_headers()
                     self.wfile.write(html_content.encode('utf-8'))
-            else:
-                self._send_response(404, None, "index.html not found", "Not Found")
-            return  
+                else:
+                    html_content = """<html><body><h1>Music Genres API</h1>
+                                <p><a href="/api/genres">/api/genres</a></p>
+                                <p><a href="/openapi.json">OpenAPI docs</a></p></body></html>"""
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(html_content.encode('utf-8'))
+                return 
             
             # openapi endpoint
             if self.path == '/openapi.json':
