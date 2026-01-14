@@ -1,9 +1,26 @@
+import code
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 import urllib.parse
 import traceback
 from database import Database
 import os
+from authlib.integrations.requests_client import OAuth2Session
+import requests
+import secrets
+import token
+
+AUTH0_DOMAIN = "dev-gq3pzktnj7mobyrc.us.auth0.com"
+CLIENT_ID = "regZXFJMzRCHMTsLT3dDbN4CPX3s2hHA"
+CLIENT_SECRET = "wHr8GjJ0QV43ggJTlCFGUFJmoLf9m0_fG-iNoJJtEgtS8Ire43zXFcY0PAmjWBAs"
+REDIRECT_URI = "http://localhost:8000/callback"
+
+AUTHORIZATION_BASE_URL = f"https://{AUTH0_DOMAIN}/authorize"
+TOKEN_URL = f"https://{AUTH0_DOMAIN}/oauth/token"
+USERINFO_URL = f"https://{AUTH0_DOMAIN}/userinfo"
+
+SESSIONS = {}  # mem sesija
+
 
 class APIHandler(BaseHTTPRequestHandler):
     db = Database()
@@ -116,6 +133,74 @@ class APIHandler(BaseHTTPRequestHandler):
                 artist = path_parts[3] if len(path_parts) > 3 else ''
                 genres = self.db.get_by_artist(artist)
                 self._send_response(200, genres, f"Genres by artist {artist} fetched")
+
+            # OAuth2 prijava
+            elif self.path == '/login':
+                oauth = OAuth2Session(
+                    CLIENT_ID,
+                    CLIENT_SECRET,
+                    scope="openid profile email",
+                    redirect_uri=REDIRECT_URI
+                )
+                uri, state = oauth.create_authorization_url(AUTHORIZATION_BASE_URL)
+                SESSIONS[state] = {}
+    
+                self.send_response(302)
+                self.send_header('Location', uri)
+                self.end_headers()
+                return
+            
+            # OAuth2 callback
+            elif self.path.startswith('/callback'):
+                query = urllib.parse.parse_qs(parsed_path.query)
+                code = query.get('code')[0]
+                state = query.get('state')[0]
+
+                oauth = OAuth2Session(
+                    CLIENT_ID,
+                    CLIENT_SECRET,
+                    redirect_uri=REDIRECT_URI
+                )
+        
+                token = oauth.fetch_token(
+                    TOKEN_URL,
+                    code=code
+                )
+
+                userinfo = requests.get(
+                    USERINFO_URL,
+                    headers={'Authorization': f"Bearer {token['access_token']}"}
+                ).json()
+
+                SESSIONS[state] = userinfo
+                self.send_response(302)
+                self.send_header('Location', '/profile')
+                self.end_headers()
+                return
+            
+            # prikaz profila
+            elif self.path == '/profile':
+                if not SESSIONS:
+                    self._send_response(401, None, "Unauthorized")
+                    return
+
+                user = list(SESSIONS.values())[0]
+                html = "../profile.html"
+
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html")
+                self.end_headers()
+                self.wfile.write(html.encode("utf-8"))
+                return
+            
+            # odjava
+            elif self.path == '/logout':
+                SESSIONS.clear()
+                self.send_response(302)
+                self.send_header('Location', '/')
+                self.end_headers()
+                return
+
             
             # ako nije pronadeno
             else:
