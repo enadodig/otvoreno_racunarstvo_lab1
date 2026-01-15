@@ -209,14 +209,14 @@ class APIHandler(BaseHTTPRequestHandler):
                 semantic_genres = []
                 for genre in genres:
                     semantic_genres.append({
-                        "@context": "https://schema.org/",
+                        "@context": "https://schema.org/",  
                         "@type": "MusicRecording",     # ne postoji MusicGenre u Schema.org
 
-                        "genre": genre["name"],
+                        "genre": genre["name"], # naziv zanra
 
-                        "byArtist": {
-                            "@type": "MusicGroup",
-                            "name": genre["artist"]
+                        "byArtist": {   
+                            "@type": "MusicGroup",  # tip iz schema.org
+                            "name": genre["artist"] # ime artista
                         },
 
                         "countryOfOrigin": {
@@ -224,37 +224,37 @@ class APIHandler(BaseHTTPRequestHandler):
                             "name": genre["origin_country"]
                         },
 
-                        "inLanguage": "hr"
+                        "inLanguage": "hr" 
                 })
 
                 self._send_response(200, semantic_genres, f"Genres by artist {artist} fetched")
 
             # OAuth2 prijava
             elif self.path == '/login':
-                oauth = OAuth2Session(
+                oauth = OAuth2Session(  # inicijalizacija OAuth2 sesije
                     CLIENT_ID,
                     CLIENT_SECRET,
-                    scope="openid profile email",
-                    redirect_uri=REDIRECT_URI
+                    scope="openid profile email",   # trazeni podatci korisnika
+                    redirect_uri=REDIRECT_URI   # redirekcija nakon prijave
                 )
-                uri, state = oauth.create_authorization_url(AUTHORIZATION_BASE_URL)
+                uri, state = oauth.create_authorization_url(AUTHORIZATION_BASE_URL) # kreiranje URL-a za autorizaciju
     
-                SESSION['oauth_state'] = state
+                SESSION['oauth_state'] = state  # cuvanje stanja sesije
     
-                self.send_response(302)
+                self.send_response(302)     # preusmjeravanje  
                 self.send_header('Location', uri)
                 self.end_headers()
                 return
             
             # OAuth2 callback
             elif self.path.startswith('/callback'):
-                query = urllib.parse.parse_qs(parsed_path.query)
+                query = urllib.parse.parse_qs(parsed_path.query)    # parsiranje query parametara
                
                 if 'code' not in query:
                     self._send_response(400, None, "Missing code")
                     return
 
-                code = query['code'][0]
+                code = query['code'][0] # dohvat koda iz query parametara
 
                 oauth = OAuth2Session(
                     CLIENT_ID,
@@ -262,13 +262,13 @@ class APIHandler(BaseHTTPRequestHandler):
                     redirect_uri=REDIRECT_URI
                 )
         
-                token = oauth.fetch_token(
+                token = oauth.fetch_token(  # dohvat tokena
                     TOKEN_URL,
                     code=code,
                     client_secret=CLIENT_SECRET
                 )
 
-                userinfo = requests.get(
+                userinfo = requests.get(    # dohvat korisnickih podataka putem tokena
                     USERINFO_URL,
                     headers={'Authorization': f"Bearer {token['access_token']}"}
                 ).json()
@@ -282,12 +282,12 @@ class APIHandler(BaseHTTPRequestHandler):
             
             # prikaz profila
             elif self.path == '/profile':
-                if 'user' not in SESSION:
+                if 'user' not in SESSION:   # provjera prijave
                     self._send_response(401, None, "Unauthorized")
                     return
 
-                u = SESSION['user']
-                html = f"""
+                u = SESSION['user'] # dohvat korisnickih podataka iz sesije
+                html = f""" 
                 <html lang="hr"><body>
                 <h2>Korisnički profil</h2>
                 <p>Email: {u.get('email')}</p>
@@ -301,31 +301,31 @@ class APIHandler(BaseHTTPRequestHandler):
                 self.wfile.write(html.encode("utf-8"))
                 
                 
-            elif self.path == '/refresh':
-                if 'user' not in SESSION:
+            elif self.path == '/refresh':   # osvjezavanje preslika
+                if 'user' not in SESSION:   # provjera prijave
                     self._send_response(401, None, "Unauthorized")
                     return
 
-                data = self.db.get_all()
-                with open("music_genres.json", "w", encoding="utf-8") as f:
-                    json.dump(data, f, ensure_ascii=False, indent=2)
+                data = self.db.get_all()    # dohvat svih zanrova
+                with open("music_genres.json", "w", encoding="utf-8") as f: # spremanje u json
+                    json.dump(data, f, ensure_ascii=False, indent=2)    # format
 
-                with open("music_genres.csv", "w", encoding="utf-8") as f:
-                    f.write("id,name,artist\n")
-                    for g in data:
+                with open("music_genres.csv", "w", encoding="utf-8") as f:  # spremanje u csv
+                    f.write("id,name,artist\n") # zaglavlje
+                    for g in data:  # svaki zanr
                         id_ = g.get('id', '')
                         name = g.get('name', '')
                         artist = g.get('artist', '')
                         f.write(f"{id_},{name},{artist}\n")
 
-                self._send_response(200, None, "Preslike osvježene")
+                self._send_response(200, None, "Preslike osvježene")    
                 return
             
             # odjava
             elif self.path == '/logout':
-                SESSION.clear()
+                SESSION.clear() # brisanje sesije
                 self.send_response(302)
-                self.send_header('Location', '/')
+                self.send_header('Location', '/')   # povratak na pocetnu
                 self.end_headers()
                 return
 
