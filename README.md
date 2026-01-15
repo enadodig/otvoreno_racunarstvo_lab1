@@ -67,3 +67,8 @@ POST /api/genres - kreiraj novi žanr
 PUT /api/genres/{id} - ažuriraj žanr
 
 DELETE /api/genres/{id} - obriši žanr
+
+# Lab4
+- web-aplikacija integrirana s uslugom auth0 za Single sign-on
+- web sučelje mogućnošću prikaza elementarnog profila prijavljenog korisnika
+- semantička dopuna za barem dva atributa resursa iz kolekcije po specifikaciji JSON-LD
