@@ -19,7 +19,7 @@ AUTHORIZATION_BASE_URL = f"https://{AUTH0_DOMAIN}/authorize"
 TOKEN_URL = f"https://{AUTH0_DOMAIN}/oauth/token"
 USERINFO_URL = f"https://{AUTH0_DOMAIN}/userinfo"
 
-SESSIONS = {}  # mem sesija
+SESSION = {}  # mem sesija
 
 
 class APIHandler(BaseHTTPRequestHandler):
@@ -62,9 +62,10 @@ class APIHandler(BaseHTTPRequestHandler):
         return {}
     
     def _handle_error(self, e):
-        print(f"Error: {str(e)}")
-        self._send_response(500, None, "Internal server error", "Internal Server Error")    # genericno da se ne otkrije vrsta greske korisniku
-    
+        import traceback
+        traceback.print_exc()  # ispisuje pun stack trace u terminal
+        self._send_response(500, None, "Internal server error", "Internal Server Error")
+
 
     def do_GET(self):
         try:
@@ -74,23 +75,32 @@ class APIHandler(BaseHTTPRequestHandler):
             BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root folder projekta
 
             if self.path == '/':
-                index_file = os.path.join(BASE_DIR, 'index.html')
-                if os.path.exists(index_file):
-                    with open(index_file, 'r', encoding='utf-8') as f:
-                        html_content = f.read()
+                try:
+                    with open("index.html", "r", encoding="utf-8") as f:
+                        html = f.read()
+        
+                    # Dinamički sadržaj za korisničke linkove
+                    if 'user' in SESSION:
+                        user_links = """
+                        <a href="/profile">Korisnički profil</a><br>
+                        <a href="/refresh">Osvježi preslike</a><br>
+                        <a href="/logout">Odjava</a>
+                        """
+                    else:
+                        user_links = '<a href="/login">Prijava</a>'
+
+                    # placeholder za linkove
+                    html = html.replace("<!--linkovi-->", user_links)
+
                     self.send_response(200)
-                    self.send_header('Content-Type', 'text/html')
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
                     self.end_headers()
-                    self.wfile.write(html_content.encode('utf-8'))
-                else:
-                    html_content = """<html><body><h1>Music Genres API</h1>
-                                <p><a href="/api/genres">/api/genres</a></p>
-                                <p><a href="/openapi.json">OpenAPI docs</a></p></body></html>"""
-                    self.send_response(200)
-                    self.send_header('Content-Type', 'text/html')
-                    self.end_headers()
-                    self.wfile.write(html_content.encode('utf-8'))
-                return 
+                    self.wfile.write(html.encode("utf-8"))
+
+                except FileNotFoundError:
+                    self._send_response(404, None, "index.html not found", "Not Found")
+                return
+
             
             # openapi endpoint
             if self.path == '/openapi.json':
@@ -108,31 +118,116 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(200, data, "All genres fetched successfully")   
             
             # dohvat po id-u
-            elif len(path_parts) == 3 and path_parts[0] == 'api' and path_parts[1] == 'genres': # potrebna 3 dijela patha (api/genres/{id})
+            elif len(path_parts) == 3 and path_parts[0] == 'api' and path_parts[1] == 'genres':
                 genre_id = path_parts[2]
-                genre = self.db.get_by_id(genre_id) # dohvat zanra po id-u
+                genre = self.db.get_by_id(genre_id)
+
                 if genre:
-                    self._send_response(200, genre, f"Genre with ID {genre_id} fetched successfully")
-                else:
-                    self._send_response(404, None, f"Genre with ID {genre_id} not found", "Not Found")
+                    semantic_genre = {
+                        "@context": "https://schema.org/",
+                        "@type": "MusicRecording",     # ne postoji MusicGenre u Schema.org
+
+                        "genre": genre.get("name", ""),
+
+                        "byArtist": {
+                            "@type": "MusicGroup",
+                            "name": genre["artist"]
+                        },
+
+                        "countryOfOrigin": {
+                            "@type": "Country",
+                            "name": genre["origin_country"]
+                        },
+
+                        "inLanguage": "hr"
+                }
+
+                self._send_response(200, semantic_genre, f"Genre with ID {genre_id} fetched")
             
             # dohvat po eri
             elif self.path.startswith('/api/genres/era/'):
                 era = path_parts[3] if len(path_parts) > 3 else ''  # dohvat ere iz patha (3. dio)
                 genres = self.db.get_by_era(era)
-                self._send_response(200, genres, f"Genres from {era} era fetched")
+                
+                semantic_genres = []
+                for genre in genres:
+                    semantic_genres.append({
+                        "@context": "https://schema.org/",
+                        "@type": "MusicRecording",     # ne postoji MusicGenre u Schema.org
+
+                        "genre": genre["name"],
+
+                        "byArtist": {
+                            "@type": "MusicGroup",
+                            "name": genre["artist"]
+                        },
+
+                        "countryOfOrigin": {
+                            "@type": "Country",
+                            "name": genre["origin_country"]
+                        },
+
+                        "inLanguage": "hr"
+                })
+
+                self._send_response(200, semantic_genres, f"Genres from {era} era fetched")
             
             # dohvat po drzavi
             elif self.path.startswith('/api/genres/country/'):
                 country = path_parts[3] if len(path_parts) > 3 else ''
                 genres = self.db.get_by_country(country)
-                self._send_response(200, genres, f"Genres from {country} fetched")
-            
+                
+                semantic_genres = []
+                for genre in genres:
+                    semantic_genres.append({
+                        "@context": "https://schema.org/",
+                        "@type": "MusicRecording",     # ne postoji MusicGenre u Schema.org
+
+                        "genre": genre["name"],
+
+                        "byArtist": {
+                            "@type": "MusicGroup",
+                            "name": genre["artist"]
+                        },
+
+                        "countryOfOrigin": {
+                            "@type": "Country",
+                            "name": genre["origin_country"]
+                        },
+
+                        "inLanguage": "hr"
+                })
+
+                self._send_response(200, semantic_genres, f"Genres from {country} fetched")
+
             # dohvat po artistu
             elif self.path.startswith('/api/genres/artist/'):
-                artist = path_parts[3] if len(path_parts) > 3 else ''
+                artist = "/".join(path_parts[3:])   # podrzava i imena s razmakom
+                artist = urllib.parse.unquote(artist)
                 genres = self.db.get_by_artist(artist)
-                self._send_response(200, genres, f"Genres by artist {artist} fetched")
+
+                semantic_genres = []
+                for genre in genres:
+                    semantic_genres.append({
+                        "@context": "https://schema.org/",
+                        "@type": "MusicRecording",     # ne postoji MusicGenre u Schema.org
+
+                        "genre": genre["name"],
+
+                        "byArtist": {
+                            "@type": "MusicGroup",
+                            "name": genre["artist"]
+                        },
+
+                        "countryOfOrigin": {
+                            "@type": "Country",
+                            "name": genre["origin_country"]
+                        },
+
+                        "inLanguage": "hr"
+                })
+
+                self._send_response(200, semantic_genres, f"Genres by artist {artist} fetched")
 
             # OAuth2 prijava
             elif self.path == '/login':
@@ -143,7 +238,8 @@ class APIHandler(BaseHTTPRequestHandler):
                     redirect_uri=REDIRECT_URI
                 )
                 uri, state = oauth.create_authorization_url(AUTHORIZATION_BASE_URL)
-                SESSIONS[state] = {}
+    
+                SESSION['oauth_state'] = state
     
                 self.send_response(302)
                 self.send_header('Location', uri)
@@ -153,8 +249,12 @@ class APIHandler(BaseHTTPRequestHandler):
             # OAuth2 callback
             elif self.path.startswith('/callback'):
                 query = urllib.parse.parse_qs(parsed_path.query)
-                code = query.get('code')[0]
-                state = query.get('state')[0]
+               
+                if 'code' not in query:
+                    self._send_response(400, None, "Missing code")
+                    return
+
+                code = query['code'][0]
 
                 oauth = OAuth2Session(
                     CLIENT_ID,
@@ -164,7 +264,8 @@ class APIHandler(BaseHTTPRequestHandler):
         
                 token = oauth.fetch_token(
                     TOKEN_URL,
-                    code=code
+                    code=code,
+                    client_secret=CLIENT_SECRET
                 )
 
                 userinfo = requests.get(
@@ -172,30 +273,57 @@ class APIHandler(BaseHTTPRequestHandler):
                     headers={'Authorization': f"Bearer {token['access_token']}"}
                 ).json()
 
-                SESSIONS[state] = userinfo
+                SESSION['user'] = userinfo
+
                 self.send_response(302)
-                self.send_header('Location', '/profile')
+                self.send_header('Location', '/')
                 self.end_headers()
                 return
             
             # prikaz profila
             elif self.path == '/profile':
-                if not SESSIONS:
+                if 'user' not in SESSION:
                     self._send_response(401, None, "Unauthorized")
                     return
 
-                user = list(SESSIONS.values())[0]
-                html = "../profile.html"
-
+                u = SESSION['user']
+                html = f"""
+                <html lang="hr"><body>
+                <h2>Korisnički profil</h2>
+                <p>Email: {u.get('email')}</p>
+                <p>Ime: {u.get('name')}</p>
+                <a href="/">Natrag</a>
+                </body></html>
+                """
                 self.send_response(200)
-                self.send_header("Content-Type", "text/html")
+                self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(html.encode("utf-8"))
+                
+                
+            elif self.path == '/refresh':
+                if 'user' not in SESSION:
+                    self._send_response(401, None, "Unauthorized")
+                    return
+
+                data = self.db.get_all()
+                with open("music_genres.json", "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+
+                with open("music_genres.csv", "w", encoding="utf-8") as f:
+                    f.write("id,name,artist\n")
+                    for g in data:
+                        id_ = g.get('id', '')
+                        name = g.get('name', '')
+                        artist = g.get('artist', '')
+                        f.write(f"{id_},{name},{artist}\n")
+
+                self._send_response(200, None, "Preslike osvježene")
                 return
             
             # odjava
             elif self.path == '/logout':
-                SESSIONS.clear()
+                SESSION.clear()
                 self.send_response(302)
                 self.send_header('Location', '/')
                 self.end_headers()

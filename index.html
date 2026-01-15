@@ -8,6 +8,25 @@
     <meta name="keywords" content="glazba, žanr, podžanr, music, genre, subgenre">
     <meta name="theme" content="glazbeni žanrovi">
     <meta name="author" content="Ena Dodig">
+
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org/",
+    "@type": "MusicGroup",
+    "name": "Rock",
+    "founder": {
+        "@type": "Person",
+        "name": "Elvis Presley"
+    },
+    "genre": "Rock",
+    "location": {
+        "@type": "Country",
+        "name": "USA"
+        }
+    }
+
+    </script>
+
 </head>
 <body>
     <h1>Glazbeni žanrovi</h1>
@@ -15,7 +34,8 @@
         <a href="data/music_genres.csv" download>Preuzmi CSV</a> <br>
         <a href="data/music_genres.json" download>Preuzmi JSON</a> <br>
         <a href="/datatable.html">Prikaži tablicu</a> <br>
-        <a href="/login">Prijava</a>
+        <p id="user-links"><!--linkovi--></p>
+
 
     </p>
     <p>
